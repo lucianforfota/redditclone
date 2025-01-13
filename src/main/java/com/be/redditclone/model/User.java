@@ -18,14 +18,27 @@ public class User {
     @Column
     private String password;
 
+    @Column
+    private String email;
+
     @OneToMany(mappedBy="user")
     private List<Post> posts;
 
     @OneToMany(mappedBy="user")
     private List<Comment> comments;
 
+    @OneToMany(mappedBy="user")
+    private List<Vote> votes;
     public User(){
 
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Long getId() {

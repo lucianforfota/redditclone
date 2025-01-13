@@ -4,6 +4,10 @@ import com.be.redditclone.dtos.PostRequestDTO;
 import com.be.redditclone.dtos.PostResponseDTO;
 import com.be.redditclone.dtos.SubredditResponseDTO;
 import com.be.redditclone.model.Post;
+import com.be.redditclone.model.Subreddit;
+import com.be.redditclone.services.PostService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +17,18 @@ import java.util.List;
 @RequestMapping("/post")
 public class PostController {
 
+
+    private PostService postService;
+
+    @Autowired
+    public PostController(PostService postService) {
+        this.postService = postService;
+    }
+
     @PostMapping
     public ResponseEntity<Post> createPost(@RequestBody PostRequestDTO postRequestDTO){
-        return null;
+        Post savedPost = postService.createPost(postRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedPost);
     }
 
     @GetMapping
