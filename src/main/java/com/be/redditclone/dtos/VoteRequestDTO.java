@@ -7,21 +7,15 @@ public class VoteRequestDTO {
     private VoteType voteType;
     private Long postId;
 
-    private Long userId;
 
-    public VoteRequestDTO(VoteType voteType, Long postId, Long userId) {
+
+    public VoteRequestDTO(VoteType voteType, Long postId) {
         this.voteType = voteType;
         this.postId = postId;
-        this.userId=userId;
+
     }
 
-    public Long getUserId() {
-        return userId;
-    }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
 
     public VoteType getVoteType() {
         return voteType;

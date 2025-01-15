@@ -10,6 +10,7 @@ import com.be.redditclone.repository.PostRepository;
 import com.be.redditclone.repository.UserRepository;
 import com.be.redditclone.repository.VoteRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -25,47 +26,42 @@ public class VoteService {
     @Transactional
     public Vote createVote(VoteRequestDTO voteRequestDTO) {
         Post post = postRepository.findById(voteRequestDTO.getPostId()).orElseThrow(() -> new ResourceNotFoundException("post not found"));
-        User user = userRepository.findById(voteRequestDTO.getUserId()).orElseThrow(() -> new ResourceNotFoundException("user not found"));
-        Optional<Vote> voteOptional = voteRepository.findByUser_IdAndPost_Id(voteRequestDTO.getUserId(), voteRequestDTO.getPostId());
+        String usernameLoggedIn = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        User user = userRepository.findByUsername(usernameLoggedIn).orElseThrow(()->new ResourceNotFoundException("user not found"));
+        Optional<Vote> voteOptional = voteRepository.findByUser_IdAndPost_Id(user.getId(), voteRequestDTO.getPostId());
         //daca user-ul a votat deja
         if (voteOptional.isPresent()) {
-            Vote existingVote = voteOptional.get();
-            //daca user-ul vrea sa voeteze cu acelasi vot ca cel dat deja
-            if (existingVote.getVoteType().equals(voteRequestDTO.getVoteType())) {
-                voteRepository.delete(existingVote);
-                //sterg votul
-                if (voteRequestDTO.getVoteType().equals(VoteType.UP_VOTE)) {
-                    post.setVoteCount(post.getVoteCount() - 1);
-                } else {
-                    post.setVoteCount(post.getVoteCount() + 1);
-                }
-                //updatez vote count-ul postului de la care sterg votul
-                postRepository.save(post);
-            } else {
-                //aletfel dau exceptie
-                throw new ResourceNotFoundException("nu poti decat sa anulezi votul. Ai votat deja");
-            }
-            return null;
-
+            return handleExistingVote(voteOptional.get(), voteRequestDTO, post);
         } else {
-            //altfel
-            // fac un vot nou
-            Vote vote = new Vote();
-            // ii setez tipul la cel care vine din dto
-            vote.setVoteType(voteRequestDTO.getVoteType());
-            //il leg de post si user
-            vote.setPost(post);
-            vote.setUser(user);
-            //salvez votul
-
-            if (voteRequestDTO.getVoteType().equals(VoteType.UP_VOTE)) {
-                post.setVoteCount(post.getVoteCount() - 1);
-            } else {
-                post.setVoteCount(post.getVoteCount() + 1);
-            }
-            postRepository.save(post);
-            return voteRepository.save(vote);
-            //update votecountul postului la care adaug noul vot
+            return createNewVote(voteRequestDTO, post, user);
         }
     }
+
+    @Transactional
+    private Vote handleExistingVote(Vote existingVote, VoteRequestDTO voteRequestDTO, Post post) {
+        // If the user attempts to vote with the same vote type, cancel the vote
+        if (existingVote.getVoteType().equals(voteRequestDTO.getVoteType())) {
+            voteRepository.delete(existingVote);
+            post.setVoteCount(post.getVoteCount() + voteRequestDTO.getVoteType().getValue());
+            postRepository.save(post);
+            return null;
+        } else {
+            throw new ResourceNotFoundException("You can only cancel your vote. You have already voted.");
+        }
+    }
+
+    @Transactional
+    private Vote createNewVote(VoteRequestDTO voteRequestDTO, Post post, User user) {
+        // Create and save a new vote
+        Vote newVote = new Vote();
+        newVote.setVoteType(voteRequestDTO.getVoteType());
+        newVote.setPost(post);
+        newVote.setUser(user);
+
+        post.setVoteCount(post.getVoteCount() + voteRequestDTO.getVoteType().getValue());
+        postRepository.save(post);
+
+        return voteRepository.save(newVote);
+    }
+
 }

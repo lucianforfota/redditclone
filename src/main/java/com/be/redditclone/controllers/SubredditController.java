@@ -31,12 +31,12 @@ public class SubredditController {
 
     @GetMapping
     public ResponseEntity<List<SubredditResponseDTO>> findAllSubreddits(){
-        return null;
+        return ResponseEntity.ok(subredditService.findAllSubreddits());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<SubredditResponseDTO> findSubredditById(@PathVariable Long id){
-        return null;
+        return ResponseEntity.ok(subredditService.findSubredditById(id));
     }
 
 }

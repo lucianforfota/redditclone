@@ -18,6 +18,9 @@ public class CommentResponseDTO {
         this.username = username;
     }
 
+
+    public CommentResponseDTO(){}
+
     public Long getId() {
         return id;
     }

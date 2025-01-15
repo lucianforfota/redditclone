@@ -7,13 +7,13 @@ public class PostRequestDTO {
     private String text;
 
     private Long subredditId;
-    private Long userId;
 
-    public PostRequestDTO(String title, String text, Long subredditId, Long userId) {
+
+    public PostRequestDTO(String title, String text, Long subredditId) {
         this.title = title;
         this.text = text;
         this.subredditId = subredditId;
-        this.userId = userId;
+
     }
 
     public String getTitle() {
@@ -40,11 +40,4 @@ public class PostRequestDTO {
         this.subredditId = subredditId;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
 }

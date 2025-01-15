@@ -16,6 +16,8 @@ public class SubredditResponseDTO {
         this.numberOfPosts = numberOfPosts;
     }
 
+    public SubredditResponseDTO(){}
+
     public String getName() {
         return name;
     }

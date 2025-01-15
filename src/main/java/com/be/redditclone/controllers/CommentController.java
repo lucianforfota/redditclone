@@ -32,11 +32,11 @@ public class CommentController {
 
     @GetMapping("/post/{id}")
     public ResponseEntity<List<CommentResponseDTO>> findAllCommentsByPostId(@PathVariable Long id){
-        return null;
+        return ResponseEntity.ok(commentService.findAllCommentsByPostId(id));
     }
 
     @GetMapping("/user/{id}")
     public ResponseEntity<List<CommentResponseDTO>> findAllCommentsByUserId(@PathVariable Long id){
-        return null;
+        return ResponseEntity.ok(commentService.findAllCommentsByUserId(id));
     }
 }

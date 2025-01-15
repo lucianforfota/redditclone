@@ -33,21 +33,21 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<List<PostResponseDTO>> findAllPosts(){
-        return null;
+        return ResponseEntity.ok(postService.findAllPosts());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PostResponseDTO> findPostById(@PathVariable Long id){
-        return null;
+        return ResponseEntity.ok(postService.findPostById(id));
     }
 
     @GetMapping("/subreddit/{id}")
     public ResponseEntity<List<PostResponseDTO>> findPostsBySubredditId(@PathVariable Long id){
-        return null;
+        return ResponseEntity.ok(postService.findAllPostsBySubredditId(id));
     }
 
     @GetMapping("/user/{id}")
     public ResponseEntity<List<PostResponseDTO>> findPostsByUserId(@PathVariable Long id){
-        return null;
+        return ResponseEntity.ok(postService.findAllPostsByUserId(id));
     }
 }

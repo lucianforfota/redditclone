@@ -2,6 +2,7 @@ package com.be.redditclone.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,6 +30,21 @@ public class User {
 
     @OneToMany(mappedBy="user")
     private List<Vote> votes;
+
+    @ManyToMany
+    @JoinTable(
+            name="user_role",
+            joinColumns= @JoinColumn(name="user_id"),
+            inverseJoinColumns = @JoinColumn(name="role_id")
+    )
+    private List<Role> roles;
+
+    public List<Role> getRoles() {
+        if(this.roles==null){
+            roles = new ArrayList<>();
+        }
+        return roles;
+    }
     public User(){
 
     }
